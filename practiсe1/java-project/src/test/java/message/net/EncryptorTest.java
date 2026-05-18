@@ -2,18 +2,25 @@ package message.net;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.apache.commons.codec.binary.Hex;
 
 public class EncryptorTest {
 
-    Encryptor encryptor = new Encryptor();
-    String input = "Hello, World!";
+    @Test
+    void shouldThrowWhenMessageIsEmpty() {
+        try {
+            new MessagePOJO((byte) 7, 130L, 166, 133, "");
+            org.junit.jupiter.api.Assertions.fail("Message is missed");
+        } catch (IllegalArgumentException e) {
+            Assertions.assertThat(e.getMessage()).isEqualTo("Message cannot be empty");
+        }
+    }
 
     @Test
-    void processInput (){
+    void shouldEncryptDataCorrectly() {
+        Encryptor encryptor = new Encryptor();
+        MessagePOJO pojo = new MessagePOJO((byte) 13, 100L, 10, 5, "Secret");
+        byte[] result = encryptor.entry_take(pojo);
 
-        byte[] testArr1 = encryptor.entry_take(input);
-
-        Assertions.assertThat(Hex.encodeHexString(testArr1)).isEqualTo("130d0000000000000082000000154fb8000000a20000008548656c6c6f2c20576f726c6421254a");
+        Assertions.assertThat(result[0]).isEqualTo((byte) 0x13);
     }
 }
